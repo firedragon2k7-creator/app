@@ -596,3 +596,38 @@ function renderHistory() {
     });
   });
 }
+function checkSmartAlerts(currentWeather, hourlyList) {
+  const alertContainer = document.getElementById('smartAlertContainer');
+  const nextWeather = hourlyList[0]; // Mốc 3 giờ tới
+
+  let alertMessage = "";
+  let alertIcon = "⚠️";
+
+  // 1. Cảnh báo sắp mưa
+  const isCurrentlyClear = !currentWeather.weather[0].main.includes("Rain");
+  const isNextRainy = nextWeather.weather[0].main.includes("Rain");
+
+  if (isCurrentlyClear && isNextRainy) {
+    alertMessage = "Cảnh báo: Trời sắp có mưa trong vài giờ tới. Bạn nhớ mang theo ô nhé!";
+    alertIcon = "🌧️";
+  }
+
+  // 2. Cảnh báo nhiệt độ thay đổi đột ngột (ví dụ giảm > 5 độ)
+  else if (currentWeather.main.temp - nextWeather.main.temp > 5) {
+    alertMessage = "Cảnh báo: Nhiệt độ sắp giảm mạnh. Hãy giữ ấm cơ thể!";
+    alertIcon = "🌡️";
+  }
+
+  // Hiển thị nếu có cảnh báo
+  if (alertMessage) {
+    alertContainer.style.display = 'block';
+    alertContainer.innerHTML = `
+      <div class="alert-card">
+        <span class="alert-icon">${alertIcon}</span>
+        <span class="alert-text">${alertMessage}</span>
+      </div>
+    `;
+  } else {
+    alertContainer.style.display = 'none';
+  }
+}
